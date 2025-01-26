@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { MantineProvider } from '@mantine/core';
 import Header from './components/Header';
 import Home from './pages/Home';
 import Footer from './components/Footer';
@@ -16,7 +15,6 @@ import './styles/App.css';
 
 function App() {
   return (
-    <MantineProvider>
       <Router>
         <AuthProvider>
           <Header />
@@ -51,7 +49,6 @@ function App() {
           <Footer />
         </AuthProvider>
       </Router>
-    </MantineProvider>
   );
 }
 
