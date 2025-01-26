@@ -1,4 +1,7 @@
 /* General Navbar Styling */
+.about-us-page {
+  margin-top: 110px;
+}
 .about-us-nav {
   position: fixed;
   display: flex;
