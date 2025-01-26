@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/',  // Set the base URL for your assets
   build: {
     rollupOptions: {
       output: {
@@ -17,7 +18,7 @@ export default defineConfig({
       },
     },
     chunkSizeWarningLimit: 2000,
-    outDir: 'dist' // Optional: Raise the warning limit
+    outDir: 'dist', // Optional: Raise the warning limit
   },
   plugins: [react()],
 })
