@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext"; // Import your AuthContext
+import Marquee from "react-fast-marquee";
 
 
 const Header = () => {
@@ -126,6 +127,11 @@ const Header = () => {
           ))}
         </Menu>
       </div>
+      <Marquee gradient={false}>
+        <Typography variant="h6" className="marquee-text">
+         Most of the features are still in development. Please be patient as we work to bring you the best experience possible.
+        </Typography>
+      </Marquee>
     </header>
   );
 };
