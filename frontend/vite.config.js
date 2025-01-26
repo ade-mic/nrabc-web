@@ -16,7 +16,8 @@ export default defineConfig({
         },
       },
     },
-    chunkSizeWarningLimit: 2000, // Optional: Raise the warning limit
+    chunkSizeWarningLimit: 2000,
+    outDir: 'dist' // Optional: Raise the warning limit
   },
   plugins: [react()],
 })
