@@ -50,6 +50,9 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .mission-content {
+    margin-top: 200px;
+  }
   .about-us-nav {
     flex-direction: column;
     align-items: flex-start;
@@ -69,5 +72,10 @@
     width: 100%;
     padding: 1rem 2rem;
     text-align: left;
+  }
+  .account {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 }

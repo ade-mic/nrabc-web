@@ -110,7 +110,6 @@ const Header = () => {
           aria-label="account"
           startIcon={<AccountCircle sx={{ color: "#6d2323" }} />}
         >
-          <Typography className="account-text">Account</Typography>
         </Button>
         <Menu
           anchorEl={accountAnchorEl}
