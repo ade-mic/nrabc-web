@@ -1,0 +1,15 @@
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.dashboard-content {
+  flex-grow: 1;
+  padding: 24px;
+  margin-left: 73px;
+  transition: margin-left 0.3s ease;
+}
+
+.dashboard-content.drawer-open {
+  margin-left: 240px;
+}
