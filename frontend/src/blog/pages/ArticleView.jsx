@@ -6,9 +6,10 @@ import { Box, Breadcrumbs, Typography, Link } from "@mui/material";
 import Pagination from "../components/Pagination";
 import FilterComponent from "../components/FilterComponent";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-
+import { useAuth } from "../../contexts/AuthContext";
 
 const ArticleView = () => {
+  const { currentUser } = useAuth();
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
@@ -19,7 +20,7 @@ const ArticleView = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const fetchedArticles = await getArticles();
+        const fetchedArticles = await getUserArticles(currentUser.uid);
         setArticles(fetchedArticles);
       } catch (error) {
         console.error("Error fetching articles:", error);

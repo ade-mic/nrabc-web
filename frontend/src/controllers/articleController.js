@@ -13,15 +13,16 @@ import {
   where,
 } from "firebase/firestore";
 import { serverTimestamp } from "firebase/firestore";
+import { storage } from "../utils/firebase.js";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 
 const uploadThumbnail = async (file) => {
+  if (!file) return null; // Prevent errors if no file is provided
   try {
     const storageRef = ref(storage, `thumbnails/${Date.now()}_${file.name}`);
     await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(storageRef);
-    return downloadURL;
+    return await getDownloadURL(storageRef);
   } catch (error) {
     console.error("Error uploading thumbnail:", error);
     throw error;
@@ -32,22 +33,30 @@ const uploadThumbnail = async (file) => {
 const addArticle = async (articleData, thumbnailFile) => {
   try {
     let thumbnailUrl = null;
+
     if (thumbnailFile) {
-      thumbnailUrl = await uploadThumbnail(thumbnailFile);
+      try {
+        thumbnailUrl = await uploadThumbnail(thumbnailFile);
+      } catch (uploadError) {
+        console.error("Thumbnail upload failed:", uploadError);
+        thumbnailUrl = null; // Continue without a thumbnail
+      }
     }
 
     const docRef = await addDoc(collection(db, "articles"), {
       ...articleData,
-      thumbnail: thumbnailUrl,
+      thumbnail: thumbnailUrl, // Explicitly set null if no file
       createdAt: serverTimestamp(),
       lastModified: serverTimestamp(),
     });
+
     return docRef.id;
   } catch (error) {
     console.error("Error adding article:", error);
     throw error;
   }
 };
+
 
 const getArticles = async () => {
   try {
@@ -62,16 +71,24 @@ const getArticles = async () => {
   }
 };
 
-const updateArticle = async (id, updatedData) => {
+const updateArticle = async (id, updatedData, thumbnailFile) => {
   try {
+    let thumbnailUrl = updatedData.thumbnail || null;
+    
+    if (thumbnailFile) {
+      thumbnailUrl = await uploadThumbnail(thumbnailFile);
+    }
+
     const articleRef = doc(db, "articles", id);
     await updateDoc(articleRef, {
       ...updatedData,
-      lastModified: serverTimestamp()
+      thumbnail: thumbnailUrl,
+      lastModified: serverTimestamp(),
     });
-    console.log("Article updated successfully");
+
+    return true;
   } catch (error) {
-    console.error("Error updating article: ", error);
+    console.error("Error updating article:", error);
     throw error;
   }
 };
