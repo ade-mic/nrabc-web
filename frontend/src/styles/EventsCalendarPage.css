@@ -1,6 +1,6 @@
 .events-calendar-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 2rem;
   padding: 2rem;
   background-color: #f9f9f9;
@@ -8,7 +8,6 @@
 }
 
 .events-list {
-  flex: 1;
   background: #ffffff;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -20,6 +19,7 @@
   font-size: 1.5rem;
   margin-bottom: 1rem;
   color: #6D2323;
+  text-align: center;
 }
 
 .event-item {
@@ -27,6 +27,7 @@
   color: #555;
   padding: 0.5rem 0;
   border-bottom: 1px solid #eee;
+  list-style-type: none;
 }
 
 .event-item:last-child {
@@ -41,7 +42,6 @@
 }
 
 .calendar-section {
-  flex: 2;
   background: #ffffff;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -79,4 +79,42 @@
 
 .fc .fc-day-today {
   background: #e6f7ff;
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+  .events-calendar-container {
+    flex-direction: row;
+  }
+
+  .events-list {
+    flex: 1;
+  }
+
+  .calendar-section {
+    flex: 2;
+  }
+}
+
+@media (max-width: 767px) {
+  .events-calendar-container {
+    padding: 1rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+  }
+
+  .event-item {
+    font-size: 0.9rem;
+  }
+
+  .fc .fc-toolbar-title {
+    font-size: 1rem;
+  }
+
+  .fc .fc-button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+  }
 }

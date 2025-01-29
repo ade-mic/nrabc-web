@@ -43,6 +43,7 @@ const AuthenticationPage = () => {
     setMessage("");
     try {
       const response = await signInWithPopup(auth, provider)
+      navigate("/admin");
       setMessage("Google login successful!");
       console.log("Google login response:", response);
     } catch (error) {

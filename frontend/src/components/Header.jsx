@@ -45,13 +45,14 @@ const Header = () => {
     { text: "About Us", link: "/about" },
     { text: "Events", link: "/events" },
     { text: "Ministries", link: "/ministries" },
-    { text: "Blog", link: "/blog" },
+    { text: "Blog", link: "/articles" },
   ];
 
   const accountItems = currentUser
     ? [
         { text: "Profile", link: "/profile" },
         { text: "Sign Out", action: handleSignOut },
+        { text: "Dashboard", link: "/admin" },
       ]
     : [
         { text: "Sign In/Up", link: "/account" },

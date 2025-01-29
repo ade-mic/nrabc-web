@@ -1,171 +1,195 @@
-import React, { useState } from 'react';
-import {
-  Button,
-  Container,
-  TextField,
-  Paper,
-  Box,
-  Typography,
-  Breadcrumbs,
-  Link,
-} from '@mui/material';
-import { useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Image from '@tiptap/extension-image';
-import {
-  MenuButtonBold,
-  MenuButtonItalic,
-  MenuControlsContainer,
-  MenuDivider,
-  MenuSelectHeading,
-  RichTextEditor,
-  RichTextEditorProvider,
-  RichTextField,
-} from 'mui-tiptap';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import FileUploader from '../components/FileUploader';
-import VerticalMenu from '../../components/VerticalMenu';
-import '../styles/CreateArticle.css';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { addArticle } from "../../controllers/articleController";
+import "../styles/CreateArticle.css";
+import { Box, Breadcrumbs, Link, Typography } from "@mui/material";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import { useAuth } from "../../contexts/AuthContext";
 
 const CreateArticle = () => {
-  // Initialize the editor
-  const editor = useEditor({
-    extensions: [StarterKit, Image],
-    content: '<p>Start writing your article...</p>',
+  const navigate = useNavigate();
+  const { currentUser } = useAuth();
+  const [formData, setFormData] = useState({
+    title: "",
+    subtitle: "",
+    content: "",
+    author: currentUser?.displayName || currentUser?.name || currentUser?.email || "Anonymous",
+    authorId: currentUser?.uid,
   });
+  const [thumbnail, setThumbnail] = useState(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState(null);
 
-  // State for title, image, and article status
-  const [title, setTitle] = useState('');
-  const [images, setImages] = useState([]);
-  const [status, setStatus] = useState('draft'); // "draft" or "published"
-
-  // Handlers for file upload
-  const handleFilesAccepted = (files) => {
-    setImages(files); // Store uploaded files
-    console.log('Accepted files:', files);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
-  // Handle saving as draft
-  const handleSaveAsDraft = () => {
-    const htmlContent = editor.getHTML();
-    const articleData = {
-      title,
-      content: htmlContent,
-      images,
-      status: 'draft', // Save as draft
-    };
-    console.log('Draft Saved:', articleData);
-    // TODO: Send this data to the backend (API call)
+  const handleContentChange = (content) => {
+    setFormData(prev => ({
+      ...prev,
+      content
+    }));
   };
 
-  // Handle publishing the article
-  const handlePublish = () => {
-    const htmlContent = editor.getHTML();
-    const articleData = {
-      title,
-      content: htmlContent,
-      images,
-      status: 'published', // Mark as published
-    };
-    console.log('Article Published:', articleData);
-    // TODO: Send this data to the backend (API call)
+
+  const handleThumbnailChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setThumbnail(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setThumbnailPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
-  // Handle updating the article
-  const handleUpdate = () => {
-    const htmlContent = editor.getHTML();
-    const articleData = {
-      title,
-      content: htmlContent,
-      images,
-      status,
-    };
-    console.log('Article Updated:', articleData);
-    // TODO: Send this data to the backend (API call)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await addArticle(formData, thumbnail);
+      alert("Article created successfully!");
+      navigate("/user-articles");
+    } catch (error) {
+      console.error("Error creating article:", error);
+      alert("Failed to create article. Please try again.");
+    }
   };
 
-  // Handle deleting the article
-  const handleDelete = () => {
-    console.log('Article Deleted');
-    // TODO: Trigger deletion logic via backend (API call)
+  const quillModules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+      [{ 
+        'font': [
+          'Arial',
+          'Times New Roman',
+          'Helvetica',
+          'Courier New',
+          'Georgia',
+          'Verdana'
+        ] 
+      }],
+      [{ 'size': ['small', false, 'large', 'huge'] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'script': 'sub'}, { 'script': 'super' }],
+      ['blockquote', 'code-block'],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      [{ 'indent': '-1' }, { 'indent': '+1' }],
+      [{ 'direction': 'rtl' }],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'align': [] }],
+      ['link', 'image'],
+      ['clean']
+    ],
+    clipboard: {
+      matchVisual: false
+    }
   };
+  
+  const quillFormats = [
+    'header',
+    'font',
+    'size',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'script',
+    'blockquote',
+    'code-block',
+    'list',
+    'bullet',
+    'indent',
+    'direction',
+    'color',
+    'background',
+    'align',
+    'link',
+    'image'
+  ];
+
 
   return (
-    <>
-      <VerticalMenu />
-      <Container
-        sx={{
-          marginLeft: '250px',
-          marginBottom: '50px',
-          minHeight: '900px',
-          width: '1000px',
-        }}
-        className="create-article-container"
-      >
-        {/* Breadcrumbs */}
-        <Box className="breadcrumbs">
-          <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
-            <Link href="/admin" className="breadcrumb-link">
-              Dashboard
-            </Link>
-            <Typography color="text.primary">Create Article</Typography>
-          </Breadcrumbs>
-        </Box>
-
-        {/* Form container */}
-        <Paper elevation={3} className="form-container">
-          <Typography variant="h4" component="h1" className="form-title">
-            Create New Article
-          </Typography>
-
-          {/* Article Title */}
-          <TextField
-            label="Article Title"
-            fullWidth
-            variant="outlined"
-            className="text-field"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+    <div className="create-article">
+      <Box mb={3}>
+        <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+          <Link href="/admin" color="inherit">
+            Dashboard
+          </Link>
+          <Typography color="text.primary">Create Article</Typography>
+        </Breadcrumbs>
+      </Box>
+      <h1 className="create-article-title">Create New Article</h1>
+      <form className="create-article-form" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="title">Title</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            value={formData.title}
+            onChange={handleInputChange}
+            required
           />
+        </div>
+        <div className="form-group">
+          <label htmlFor="subtitle">Subtitle</label>
+          <input
+            type="text"
+            id="subtitle"
+            name="subtitle"
+            value={formData.subtitle}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
 
-          {/* Rich Text Editor */}
-          <Paper className="editor-container">
-            <RichTextEditorProvider editor={editor}>
-              <RichTextField
-                controls={
-                  <MenuControlsContainer>
-                    <MenuSelectHeading />
-                    <MenuDivider />
-                    <MenuButtonBold />
-                    <MenuButtonItalic />
-                  </MenuControlsContainer>
-                }
-              />
-            </RichTextEditorProvider>
-          </Paper>
+        <div className="form-group">
+          <label htmlFor="content">Content</label>
+          <ReactQuill
+            value={formData.content}
+            onChange={handleContentChange}
+            modules={quillModules}
+            formats={quillFormats}
+          />
+        </div>
 
-          {/* Image Upload Section */}
-          <Paper style={{ marginTop: '20px', padding: '20px', height: '250px' }}>
-            <Typography variant="h6" component="h2" className="image-upload-title">
-              Upload Images
-            </Typography>
-            <FileUploader onFilesAccepted={handleFilesAccepted} />
-          </Paper>
+        <div className="form-group">
+          <label htmlFor="thumbnail">Thumbnail Image</label>
+          <input
+            type="file"
+            id="thumbnail"
+            accept="image/*"
+            onChange={handleThumbnailChange}
+          />
+          {thumbnailPreview && (
+            <img
+              src={thumbnailPreview}
+              alt="Thumbnail preview"
+              className="thumbnail-preview"
+            />
+          )}
+        </div>
 
-          {/* Action Buttons */}
-          <Box className="action-buttons">
-            <Button
-              variant="contained"
-              color="success"
-              onClick={handleSaveAsDraft}
-              className="button-draft"
-            >
-               Save as Draft
-            </Button>
-          </Box>
-        </Paper>
-      </Container>
-    </>
+        <div className="form-actions">
+          <button type="submit" className="save-button">
+            Create Article
+          </button>
+          <button
+            type="button"
+            className="cancel-button"
+            onClick={() => navigate("/user-articles")}
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 

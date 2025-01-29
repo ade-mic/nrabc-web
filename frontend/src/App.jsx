@@ -10,6 +10,10 @@ import AdminDashboard from './pages/AdminDashBoard';
 import { AuthProvider } from './contexts/AuthContext';
 import CreateArticle from './blog/pages/CreateArticle';
 import PrivateRoute from './contexts/PrivateRoute';
+import ArticleView from './blog/pages/ArticleView';
+import FullPageArticleView from './blog/pages/FullPageArticleView';
+import EditArticle from './blog/pages/EditArticle';
+import AllArticles from './blog/pages/AllArticles';
 
 import './styles/App.css';
 
@@ -26,6 +30,8 @@ function App() {
               <Route path="/events" element={<EventsCalendarPage />} />
               <Route path="/ministries" element={<Ministries />} />
               <Route path="/account" element={<AuthenticationPage />} />
+              <Route path="/article/:id" element={<FullPageArticleView />} />
+              <Route path="/articles" element={<AllArticles />} />
               
               {/* Protected Routes */}
               <Route 
@@ -44,6 +50,23 @@ function App() {
                   </PrivateRoute>
                 } 
               />
+              <Route
+                path="/user-articles"
+                element={
+                    <PrivateRoute>
+                      <ArticleView />
+                    </PrivateRoute>
+                  } 
+              />
+              <Route 
+                path="/edit-article/:id" 
+                element={
+                  <PrivateRoute>
+                    <EditArticle />
+                  </PrivateRoute>
+                }
+              />
+
             </Routes>
           </main>
           <Footer />

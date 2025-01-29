@@ -1,0 +1,98 @@
+.full-page-article {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  margin-top: 120px;
+}
+
+
+
+.article-content {
+  text-align: center;
+  background: #f5f5f5;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.article-thumbnail {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.article-title {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: #1a237e;
+}
+.article-subtitle {
+  font-size: 1rem;
+  margin-bottom: 15px;
+  color: #1a237e;
+}
+.article-body {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+}
+.article-body p {
+  text-align: justify;
+  margin-bottom: 10px; /* Adds space between paragraphs */
+}
+
+.article-body a {
+  color: #1a237e; /* Links with a custom color */
+  text-decoration: none;
+}
+
+.article-meta {
+  margin: 1rem 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.article-author {
+  font-weight: 500;
+  margin-right: 1rem;
+}
+
+.article-date {
+  font-style: italic;
+}
+
+.article-body a:hover {
+  text-decoration: underline; /* Underline on hover for links */
+}
+.article-body ul {
+  list-style-type: disc;
+  margin-left: 20px; /* Indent for better readability */
+}
+
+.article-body ol {
+  list-style-type: decimal;
+  margin-left: 20px;
+}
+
+.article-body ul li,
+.article-body ol li {
+  margin-bottom: 5px;
+  font-size: 1rem; /* Ensure consistent text size */
+  text-align: justify;
+}
+
+.no-article {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.no-article p {
+  font-size: 18px;
+  color: #666;
+}
+
+.no-article .back-button {
+  margin-top: 20px;
+}

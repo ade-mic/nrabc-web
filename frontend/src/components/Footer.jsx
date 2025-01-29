@@ -5,17 +5,22 @@ const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-content">
+        {/* Logo Section */}
         <div className="footer-logo">
           <a href="/" aria-label="Home">
             <img src="/nrabc_logo.svg" alt="Church Logo" className="logo" />
           </a>
         </div>
+
+        {/* Contact Section */}
         <div className="footer-contact">
           <h3 className="footer-section-title">Contact Us</h3>
           <p>Plot 32, Familusi Avenue, Off Joyce B Road, New GRA, Iyaganku</p>
-          <p>Ibadan. G.P.O. Box 16489, Ibadan, Oyo State</p>
+          <p>Ibadan. P.O. Box 16489, Ibadan, Oyo State</p>
           <a href="mailto:nrabaptist@gmail.com">📧 nrabaptist@gmail.com</a>
         </div>
+
+        {/* Social Media Section */}
         <div className="footer-social">
           <h3 className="footer-section-title">Follow Us</h3>
           <div className="social-icons">
@@ -30,6 +35,8 @@ const Footer = () => {
             </a>
           </div>
         </div>
+
+        {/* Quick Links Section */}
         <div className="footer-links">
           <h3 className="footer-section-title">Quick Links</h3>
           <ul>
@@ -37,13 +44,15 @@ const Footer = () => {
             <li><a href="/worship">Worship with us</a></li>
             <li><a href="/events">Events</a></li>
             <li><a href="/ministries">Ministries</a></li>
-            <li><a href="/blog">Blogs</a></li>
+            <li><a href="/articles">Blogs</a></li>
           </ul>
         </div>
       </div>
+
+      {/* Credits Section */}
       <div className="footer-credits">
-          <p>&copy; 2025 NRABC. All rights reserved.</p>
-        </div>
+        <p>&copy; 2025 NRABC. All rights reserved.</p>
+      </div>
     </footer>
   );
 };

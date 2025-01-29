@@ -2,18 +2,17 @@ import React from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import { addDays, format } from 'date-fns';
 import '../styles/EventsCalendarPage.css';
 
 const events = [
   { title: "Church Service", date: "2025-01-20", recurrence: "weekly" },
   { title: "Youth Bible Study", date: "2025-01-21" },
-  {title: "Bible Study ", date: "2025-01-22", recurrence: "weekly"},
+  { title: "Bible Study", date: "2025-01-22", recurrence: "weekly" },
   { title: "Prayer Meeting", date: "2025-01-23", recurrence: "weekly" },
   { title: "Discipleship Group", date: "2025-01-25", recurrence: "weekly" },
   { title: "Healing Hour Service", date: "2025-01-18", recurrence: "weekly" },
 ];
-
-import { addDays, format } from 'date-fns';
 
 // Utility to generate recurring weekly events
 const generateRecurringEvents = (event) => {
@@ -35,8 +34,6 @@ const generateRecurringEvents = (event) => {
 
 // Process all events
 const processedEvents = events.flatMap(generateRecurringEvents);
-
-
 
 const EventsCalendarPage = () => {
   const handleDateClick = (info) => {
