@@ -39,6 +39,7 @@ const VerticalMenu = () => {
     { text: "Articles", icon: <Article />, path: "/user-articles" },
     { text: "Manage Users", icon: <People />, path: "/manage-users" },
     { text: "Create Event", icon: <Event />, path: "/create-event" },
+    {text: "View Events", icon: <Event />, path: "/view-event"},
     { text: "Upload Resources", icon: <CloudUpload />, path: "/resources" },
   ];
 

@@ -14,7 +14,9 @@ import ArticleView from './blog/pages/ArticleView';
 import FullPageArticleView from './blog/pages/FullPageArticleView';
 import EditArticle from './blog/pages/EditArticle';
 import AllArticles from './blog/pages/AllArticles';
-
+import EventForm from './events/EventForm'
+import EventView from './events/EventView';
+import AllEvents from './events/AllEvents';
 import './styles/App.css';
 
 function App() {
@@ -32,6 +34,7 @@ function App() {
               <Route path="/account" element={<AuthenticationPage />} />
               <Route path="/article/:id" element={<FullPageArticleView />} />
               <Route path="/articles" element={<AllArticles />} />
+              <Route path='/events/:id' element={<EventView />} />
               
               {/* Protected Routes */}
               <Route 
@@ -66,7 +69,22 @@ function App() {
                   </PrivateRoute>
                 }
               />
-
+              <Route
+                path="/create-event"
+                element={
+                  <PrivateRoute>
+                    <EventForm />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path='/view-event'
+                element={
+                  <PrivateRoute>
+                    <AllEvents />
+                  </PrivateRoute>
+                }
+              />
             </Routes>
           </main>
           <Footer />
