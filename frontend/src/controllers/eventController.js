@@ -1,6 +1,8 @@
 import { db } from '../utils/firebase';
 import { collection, addDoc, getDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+import dayjs from 'dayjs';
 
+// Reference to the events collection
 const eventCollectionRef = collection(db, "events");
 
 // Create Event
@@ -26,14 +28,15 @@ const getEvent = async (eventId) => {
   }
 };
 
-// Read All Events
+// Read All Events (Handles Recurring Events)
 const getAllEvents = async () => {
   try {
     const querySnapshot = await getDocs(eventCollectionRef);
-    return querySnapshot.docs.map(doc => ({
+    const events = querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
     }));
+    return events;
   } catch (error) {
     throw new Error(`Error fetching events: ${error.message}`);
   }

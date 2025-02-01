@@ -2,33 +2,33 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
-  Card,
-  CardContent,
-  Typography,
   Stack,
   TextField,
   Button,
-  IconButton,
-  Pagination,
   CircularProgress,
   Alert,
+  Snackbar,
+  Breadcrumbs,
+  Link,
+  Pagination,
+  Typography,
 } from '@mui/material';
-import {
-  Add as AddIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  Search as SearchIcon,
-} from '@mui/icons-material';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import { Add as AddIcon, Search as SearchIcon } from '@mui/icons-material';
+import { useAuth } from '../contexts/AuthContext';
 import { getAllEvents, deleteEvent } from '../controllers/eventController';
+import EventCard from './EventCard';
 
 const AllEvents = () => {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const [events, setEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const eventsPerPage = 6;
 
   useEffect(() => {
@@ -36,71 +36,61 @@ const AllEvents = () => {
   }, []);
 
   useEffect(() => {
-    const filtered = events.filter(event =>
-      event.title.toLowerCase().includes(search.toLowerCase()) ||
-      event.description.toLowerCase().includes(search.toLowerCase())
+    setFilteredEvents(
+      events.filter(event =>
+        event.title.toLowerCase().includes(search.toLowerCase()) ||
+        event.description.toLowerCase().includes(search.toLowerCase())
+      )
     );
-    setFilteredEvents(filtered);
     setPage(1);
   }, [search, events]);
 
   const fetchEvents = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const fetchedEvents = await getAllEvents();
       setEvents(fetchedEvents);
       setFilteredEvents(fetchedEvents);
-    } catch (error) {
-      setError(error.message);
+    } catch (err) {
+      setError('Failed to load events. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async (id, event) => {
-    event.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this event?')) {
-      try {
-        await deleteEvent(id);
-        fetchEvents();
-      } catch (error) {
-        setError(error.message);
-      }
-    }
-  };
-
-  const paginatedEvents = filteredEvents.slice(
-    (page - 1) * eventsPerPage,
-    page * eventsPerPage
-  );
-
-  if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" p={4}>
-        <CircularProgress />
-      </Box>
-    );
-  }
+  const paginatedEvents = filteredEvents.slice((page - 1) * eventsPerPage, page * eventsPerPage);
 
   return (
-    <Box sx={{ p: 3, marginTop:"120px", marginLeft:"50px", marginRight:"50px" }}>
-      <Stack spacing={3}>
-        <Stack
-          direction={{ xs: 'column', sm: 'row' }}
-          justifyContent="space-between"
-          alignItems="center"
-          spacing={2}
-        >
-          <Typography variant="h4">Events</Typography>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => navigate('/events/new')}
+    <Box sx={{ p: 3, mx: 'auto', mt: '150px', mb: '50px', maxWidth: '900px' }}>
+      {currentUser && (
+        <>
+          <Box mb={3}>
+            <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+              <Link href="/admin" color="inherit">
+                Dashboard
+              </Link>
+              <Typography color="text.primary">Events</Typography>
+            </Breadcrumbs>
+          </Box>
+          <Stack 
+            direction={{ xs: 'column', sm: 'row' }} 
+            justifyContent="space-between" 
+            alignItems="center"
+            mb={3}
           >
-            Create Event
-          </Button>
-        </Stack>
+            <Typography variant="h4">Events</Typography>
+            <Button 
+              variant="contained" 
+              startIcon={<AddIcon />} 
+              onClick={() => navigate('/create-event')}
+            >
+              Create Event
+            </Button>
+          </Stack>
+        </>
+      )}
 
+      <Stack spacing={3}>
         <TextField
           fullWidth
           variant="outlined"
@@ -113,72 +103,44 @@ const AllEvents = () => {
         />
 
         {error && <Alert severity="error">{error}</Alert>}
+        
+        {loading ? (
+          <Box display="flex" justifyContent="center" p={4}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <>
+            <Stack spacing={2}>
+              {paginatedEvents.map(event => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  isAuthor={currentUser?.uid === event.creatorId}
+                  onEventUpdated={fetchEvents}  // Pass the callback to refresh events
+                />
+              ))}
+            </Stack>
 
-        <Stack spacing={2}>
-          {paginatedEvents.map((event) => (
-            <Card
-              key={event.id}
-              sx={{ cursor: 'pointer' }}
-              onClick={() => navigate(`/events/${event.id}`)}
-            >
-              <CardContent>
-                <Stack spacing={2}>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                  >
-                    <Typography variant="h6">{event.title}</Typography>
-                    <Stack direction="row" spacing={1}>
-                      <IconButton
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/events/${event.id}/edit`);
-                        }}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={(e) => handleDelete(event.id, e)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Stack>
-                  </Stack>
-
-                  <Typography variant="body2" color="text.secondary">
-                    {event.description}
-                  </Typography>
-
-                  <Stack
-                    direction={{ xs: 'column', sm: 'row' }}
-                    spacing={2}
-                    divider={<Box sx={{ borderRight: 1, borderColor: 'divider' }} />}
-                  >
-                    <Typography variant="body2">
-                      {new Date(event.startDate).toLocaleDateString()}
-                    </Typography>
-                    <Typography variant="body2">{event.location}</Typography>
-                  </Stack>
-                </Stack>
-              </CardContent>
-            </Card>
-          ))}
-        </Stack>
-
-        {filteredEvents.length > eventsPerPage && (
-          <Stack alignItems="center">
-            <Pagination
-              count={Math.ceil(filteredEvents.length / eventsPerPage)}
-              page={page}
-              onChange={(_, value) => setPage(value)}
-            />
-          </Stack>
+            {filteredEvents.length > eventsPerPage && (
+              <Stack alignItems="center">
+                <Pagination 
+                  count={Math.ceil(filteredEvents.length / eventsPerPage)} 
+                  page={page} 
+                  onChange={(_, value) => setPage(value)} 
+                />
+              </Stack>
+            )}
+          </>
         )}
       </Stack>
+
+      <Snackbar 
+        open={snackbar.open} 
+        autoHideDuration={4000} 
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
+      </Snackbar>
     </Box>
   );
 };

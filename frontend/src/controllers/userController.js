@@ -1,4 +1,6 @@
-import { db, auth, provider, storage } from "./utils/firebase.js";
+import { db, auth, provider, storage } from "../utils/firebase.js";
+import { getFunctions, httpsCallable } from "firebase/functions";
+
 import {
   collection,
   doc,
@@ -16,9 +18,12 @@ import {
   signInWithEmailAndPassword,
   signOut,
   signInWithPopup,
- } from "firebase/auth";
+} from "firebase/auth";
 
- const loginUser = async ({ email, password }) => {
+const functions = getFunctions();
+const addAdminRole = httpsCallable(functions, 'addAdminRole');
+
+const loginUser = async ({ email, password }) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     return userCredential.user;
@@ -35,6 +40,7 @@ const createUser = async ({ email, password, firstName, lastName }) => {
       email,
       firstName,
       lastName,
+      role: "user",
       createdAt: new Date(),
     });
     return user;
@@ -42,6 +48,31 @@ const createUser = async ({ email, password, firstName, lastName }) => {
     throw error;
   }
 }
+
+const getAllUsers = async () => {
+  try {
+    const getAllUsersFunction = httpsCallable(functions, 'getAllUsers');
+    const response = await getAllUsersFunction();
+    return response.data.users;
+  } catch (error) {
+    console.error('Error getting all users:', error);
+    throw error;
+  }
+};
+
+const updateUserRole = async (userId, newRole) => {
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error('User not signed in');
+    }
+    const response = await addAdminRole({ uid: userId });
+    return(response.data.message);
+    } catch (error) {
+      console.error('Error updating user role:', error);
+      throw error;
+    }
+};
 
 const logoutUser = async () => {
   try {
@@ -54,4 +85,4 @@ const logoutUser = async () => {
 
 
 
-export  { loginUser, createUser, logoutUser };
+export  { loginUser, createUser, logoutUser, getAllUsers, updateUserRole };
